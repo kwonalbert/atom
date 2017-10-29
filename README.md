@@ -5,9 +5,9 @@ messages while preserving their anonymity. This is particularly useful for
 things like anonymous whistleblowing and protest organization, where the sender
 may fear retaliation from powerful adversaries for sending certain messages.
 Atom is the first anonymous communication system that scales horiztonally while
-protecting against traffic analysis by global adversaries. Our [SOSP'17 paper]
-(http://people.csail.mit.edu/devadas/pubs/atom.pdf) explains the system in
-detail.
+protecting against traffic analysis by global adversaries. Our 
+[SOSP'17 paper](http://people.csail.mit.edu/devadas/pubs/atom.pdf) 
+explains the system in detail.
 
 The code posted here is a *research prototype*. While the code performs all the
 necessary crypto operations and should be fairly accurate in terms of
