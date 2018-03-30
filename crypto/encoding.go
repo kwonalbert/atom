@@ -6,8 +6,8 @@ import (
 	"reflect"
 
 	"github.com/dedis/kyber"
-	"github.com/dedis/kyber/share/pedersen/dkg"
-	"github.com/dedis/kyber/share/pedersen/vss"
+	dkg "github.com/dedis/kyber/share/dkg/pedersen"
+	vss "github.com/dedis/kyber/share/vss/pedersen"
 	"github.com/dedis/protobuf"
 )
 
@@ -90,11 +90,8 @@ func (d *ThresholdDeal) MarshalBinary() ([]byte, error) {
 	buf := new(bytes.Buffer)
 	deal := d.D
 	writeUint32(buf, deal.Index)
-	b, err := deal.Deal.DHKey.MarshalBinary()
-	if err != nil {
-		return nil, err
-	}
-	err = writeBytes(buf, b)
+	b := deal.Deal.DHKey
+	err := writeBytes(buf, b)
 	if err != nil {
 		return nil, err
 	}
@@ -122,15 +119,11 @@ func (d *ThresholdDeal) UnmarshalBinary(data []byte) error {
 		return err
 	}
 	deal.Deal = new(vss.EncryptedDeal)
-	deal.Deal.DHKey = SUITE.Point()
 	b, err := readBytes(buf)
 	if err != nil {
 		return err
 	}
-	err = deal.Deal.DHKey.UnmarshalBinary(b)
-	if err != nil {
-		return err
-	}
+	deal.Deal.DHKey = b
 
 	deal.Deal.Signature, err = readBytes(buf)
 	if err != nil {

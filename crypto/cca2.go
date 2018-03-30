@@ -4,14 +4,14 @@ import (
 	"errors"
 	"log"
 
-	"github.com/dedis/kyber/cipher"
+	"github.com/dedis/kyber/util/random"
 
 	"golang.org/x/crypto/nacl/secretbox"
 	"golang.org/x/crypto/sha3"
 )
 
 func CCA2Encrypt(plaintext []byte, nonce []byte, X *PublicKey) InnerCiphertext {
-	rnd := SUITE.Cipher(cipher.RandomKey)
+	rnd := random.New()
 
 	r := SUITE.Scalar().Pick(rnd)
 	R := SUITE.Point().Mul(r, nil)

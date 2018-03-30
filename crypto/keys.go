@@ -7,12 +7,11 @@ import (
 	"log"
 	"os"
 
-	"github.com/dedis/crypto/abstract"
+	"github.com/dedis/kyber/util/random"
 )
 
 func GenKey() *KeyPair {
-	rnd := SUITE.Cipher(abstract.RandomKey)
-	x := SUITE.Scalar().Pick(rnd)
+	x := SUITE.Scalar().Pick(random.New())
 	X := SUITE.Point().Mul(x, nil)
 	return &KeyPair{
 		Priv: &PrivateKey{x},

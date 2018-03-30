@@ -2,7 +2,7 @@ package crypto
 
 import (
 	"github.com/dedis/kyber"
-	"github.com/dedis/kyber/share/pedersen/dkg"
+	dkg "github.com/dedis/kyber/share/dkg/pedersen"
 )
 
 const (

@@ -5,9 +5,8 @@ import (
 	"log"
 	"sync"
 
-	"github.com/dedis/crypto/random"
 	"github.com/dedis/kyber"
-	"github.com/dedis/kyber/share/pedersen/dkg"
+	dkg "github.com/dedis/kyber/share/dkg/pedersen"
 )
 
 type Threshold struct {
@@ -35,7 +34,7 @@ func NewThreshold(myIdx, T int, key *KeyPair, longPubs []*PublicKey) *Threshold 
 	}
 
 	keyGen, err := dkg.NewDistKeyGenerator(SUITE, key.Priv.s,
-		myGroupKeys, random.Stream, T)
+		myGroupKeys, T)
 	if err != nil {
 		log.Fatal("Could not create dist key gen", err)
 	}

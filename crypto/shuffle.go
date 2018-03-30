@@ -4,13 +4,12 @@ import (
 	"runtime"
 	"sync"
 
-	"github.com/dedis/crypto/abstract"
-	"github.com/dedis/crypto/random"
+	"github.com/dedis/kyber/util/random"
 )
 
 // Reblind the messages and randomly permute them
 func Shuffle(X *PublicKey, cs []Ciphertext) []Ciphertext {
-	rnd := SUITE.Cipher(abstract.RandomKey)
+	rnd := random.New()
 	k := len(cs)
 
 	ciphertexts := make([]Ciphertext, k)
@@ -51,7 +50,7 @@ func Shuffle(X *PublicKey, cs []Ciphertext) []Ciphertext {
 		pi[i] = i
 	}
 	for i := k - 1; i > 0; i-- { // Shuffle by random swaps
-		j := int(random.Uint64(rnd) % uint64(i+1))
+		j := int(randUint64(rnd) % uint64(i+1))
 		if j != i {
 			t := pi[j]
 			pi[j] = pi[i]

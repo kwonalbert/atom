@@ -1,12 +1,13 @@
 package crypto
 
 import (
+	"crypto/cipher"
 	"crypto/rand"
+	"encoding/binary"
 	"fmt"
 	"log"
 
 	"github.com/dedis/kyber"
-	"github.com/dedis/kyber/cipher"
 	"github.com/dedis/kyber/util/random"
 )
 
@@ -41,7 +42,7 @@ func GenMsg(msg []byte) Message {
 			if end > len(plaintext) {
 				end = len(plaintext)
 			}
-			pt = SUITE.Point().Embed(plaintext[start:end], random.Stream)
+			pt = SUITE.Point().Embed(plaintext[start:end], random.New())
 			pts = append(pts, &Point{pt})
 			i++
 			done = end == len(plaintext)
@@ -65,7 +66,7 @@ func GenMsgs(plaintexts [][]byte) []Message {
 
 func GenRandMsg(numPts int) Message {
 	msg := make([]*Point, numPts)
-	rnd := SUITE.Cipher(cipher.RandomKey)
+	rnd := random.New()
 	for m := range msg {
 		tmp := SUITE.Scalar().Pick(rnd)
 		msg[m] = &Point{SUITE.Point().Mul(tmp, nil)}
@@ -75,7 +76,7 @@ func GenRandMsg(numPts int) Message {
 
 func GenPoints(numPts int) []*Point {
 	msg := make([]*Point, numPts)
-	rnd := SUITE.Cipher(cipher.RandomKey)
+	rnd := random.New()
 	for m := range msg {
 		tmp := SUITE.Scalar().Pick(rnd)
 		msg[m] = &Point{SUITE.Point().Mul(tmp, nil)}
@@ -109,7 +110,7 @@ func TrapToMessage(trap Trap, numPts int) (Message, error) {
 	}
 	buf = append(buf, byte(TRAP))
 	for {
-		pt := SUITE.Point().Embed(buf, random.Stream)
+		pt := SUITE.Point().Embed(buf, random.New())
 		res, err := pt.Data()
 		if err != nil || !compareArray(buf, res) {
 			fmt.Println("fail trap!")
@@ -204,4 +205,10 @@ func CopyPubs(pubs []*PublicKey) []*PublicKey {
 		cp[i].UnmarshalBinary(b)
 	}
 	return cp
+}
+
+// randUint64 chooses a uniform random uint64
+func randUint64(rand cipher.Stream) uint64 {
+	b := random.Bits(64, false, rand)
+	return binary.BigEndian.Uint64(b)
 }

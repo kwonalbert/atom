@@ -9,14 +9,13 @@ import (
 	"golang.org/x/crypto/sha3"
 
 	"github.com/dedis/kyber"
-	"github.com/dedis/kyber/cipher"
 	"github.com/dedis/kyber/proof"
 	"github.com/dedis/kyber/shuffle"
 	"github.com/dedis/kyber/util/random"
 )
 
 func ProveEncrypt(X *PublicKey, msg Message) (Ciphertext, EncProof) {
-	rnd := SUITE.Cipher(cipher.RandomKey)
+	rnd := random.New()
 	R := make([]*Point, len(msg))
 	C := make([]*Point, len(msg))
 	proof := EncProof{
@@ -78,7 +77,7 @@ func ProveReencrypt(x *PrivateKey, XBar *PublicKey, c Ciphertext) (Ciphertext, R
 			c.R[idx] = &Point{SUITE.Point().Null()}
 		}
 	}
-	rnd := SUITE.Cipher(cipher.RandomKey)
+	rnd := random.New()
 
 	proofs := make([][]byte, len(c.C))
 
@@ -113,7 +112,7 @@ func ProveReencrypt(x *PrivateKey, XBar *PublicKey, c Ciphertext) (Ciphertext, R
 		sec["r"] = rBar
 		pub["Y'-Y"] = SUITE.Point().Sub(ctmp, c.C[idx].p)
 		prover := p.Prover(SUITE, sec, pub, nil)
-		proof, err := proof.HashProve(SUITE, "Decrypt", rnd, prover)
+		proof, err := proof.HashProve(SUITE, "Decrypt", prover)
 		if err != nil {
 			log.Fatal("Proof gen err:", err)
 		}
@@ -211,7 +210,7 @@ func VerifyReencryptBatches(ob, nb [][]Ciphertext, proofs [][]ReencProof, neighb
 
 // Reblind and also return reblinding factors for prove shuffle
 func reblind(X *PublicKey, c Ciphertext) (Ciphertext, []*Scalar) {
-	rnd := SUITE.Cipher(cipher.RandomKey)
+	rnd := random.New()
 	blinds := make([]*Scalar, len(c.C))
 	nc := Ciphertext{
 		R: make([]*Point, len(c.R)),
@@ -230,7 +229,7 @@ func reblind(X *PublicKey, c Ciphertext) (Ciphertext, []*Scalar) {
 }
 
 func ProveShuffle(X *PublicKey, cs []Ciphertext) ([]Ciphertext, ShufProof) {
-	rnd := SUITE.Cipher(cipher.RandomKey)
+	rnd := random.New()
 	k := len(cs)
 
 	ciphertexts := make([]Ciphertext, k)
@@ -269,7 +268,7 @@ func ProveShuffle(X *PublicKey, cs []Ciphertext) ([]Ciphertext, ShufProof) {
 		pi[i] = i
 	}
 	for i := k - 1; i > 0; i-- { // Shuffle by random swaps
-		j := int(random.Uint64(rnd) % uint64(i+1))
+		j := int(randUint64(rnd) % uint64(i+1))
 		if j != i {
 			t := pi[j]
 			pi[j] = pi[i]
@@ -301,7 +300,7 @@ func ProveShuffle(X *PublicKey, cs []Ciphertext) ([]Ciphertext, ShufProof) {
 			prover := func(ctx proof.ProverContext) error {
 				return ps.Prove(pi, nil, X.p, r, R, C, rnd, ctx)
 			}
-			proof, err := proof.HashProve(SUITE, "PairShuffle", rnd, prover)
+			proof, err := proof.HashProve(SUITE, "PairShuffle", prover)
 			if err != nil {
 				log.Fatal("Error creating proof:", err)
 			}

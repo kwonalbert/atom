@@ -5,17 +5,19 @@ import (
 	"runtime"
 	"sync"
 
-	"github.com/dedis/kyber/cipher"
+	"github.com/dedis/crypto/xof/blake"
 	"github.com/dedis/kyber/group/edwards25519"
+	"github.com/dedis/kyber/util/random"
+
 	"golang.org/x/crypto/sha3"
 )
 
-var SUITE = edwards25519.NewAES128SHA256Ed25519()
+var SUITE = edwards25519.NewBlakeSHA256Ed25519WithRand(blake.New(nil))
 var refPt = SUITE.Point()
 
 // Basic ElGamal encryption
 func Encrypt(X *PublicKey, msg Message) Ciphertext {
-	rnd := SUITE.Cipher(cipher.RandomKey)
+	rnd := random.New()
 	R := make([]*Point, len(msg))
 	C := make([]*Point, len(msg))
 	for idx := range msg {
@@ -42,7 +44,7 @@ func Decrypt(x *PrivateKey, c Ciphertext) Message {
 
 // Reblind ciphertext c using publickey X
 func Reblind(X *PublicKey, c Ciphertext) Ciphertext {
-	rnd := SUITE.Cipher(cipher.RandomKey)
+	rnd := random.New()
 	for idx := range c.C {
 		r := SUITE.Scalar().Pick(rnd)
 		newR := SUITE.Point().Mul(r, nil)
@@ -63,7 +65,7 @@ func Reencrypt(x *PrivateKey, XBar *PublicKey, c Ciphertext) Ciphertext {
 			c.R[idx] = &Point{SUITE.Point().Null()}
 		}
 	}
-	rnd := SUITE.Cipher(cipher.RandomKey)
+	rnd := random.New()
 
 	ciphertext := Ciphertext{
 		R: make([]*Point, len(c.R)),
