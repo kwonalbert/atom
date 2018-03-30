@@ -61,11 +61,11 @@ storage = '/tmp'
 gopath = os.getenv('GOPATH')
 src_dir = 'github.com/kwonalbert/atom'
 
-os.system('go install %s/cmd/db' % (src_dir))
-os.system('go install %s/cmd/directory' % (src_dir))
-os.system('go install %s/cmd/trustee' % (src_dir))
-os.system('go install %s/cmd/server' % (src_dir))
-os.system('go install %s/cmd/client' % (src_dir))
+os.system('go install -tags experimental %s/cmd/db' % (src_dir))
+os.system('go install -tags experimental %s/cmd/directory' % (src_dir))
+os.system('go install -tags experimental %s/cmd/trustee' % (src_dir))
+os.system('go install -tags experimental %s/cmd/server' % (src_dir))
+os.system('go install -tags experimental %s/cmd/client' % (src_dir))
 
 flag_dir_addr = "--dirAddr 127.0.0.1:%d" % flags['port']
 if aws:

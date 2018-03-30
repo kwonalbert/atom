@@ -5,8 +5,8 @@ messages while preserving their anonymity. This is particularly useful for
 things like anonymous whistleblowing and protest organization, where the sender
 may fear retaliation from powerful adversaries for sending certain messages.
 Atom is the first anonymous communication system that scales horiztonally while
-protecting against traffic analysis by global adversaries. Our 
-[SOSP'17 paper](http://people.csail.mit.edu/devadas/pubs/atom.pdf) 
+protecting against traffic analysis by global adversaries. Our
+[SOSP'17 paper](http://people.csail.mit.edu/devadas/pubs/atom.pdf)
 explains the system in detail.
 
 The code posted here is a *research prototype*. While the code performs all the
@@ -46,9 +46,13 @@ given round so that users can download them.
 
 ## Running the code
 
+The code currently builds on the experimental main branch of the Kyber library.
+There is a chance future updates may break the code base. If you catch this,
+please file an issue and let us know!
+
 To create all the executable, run
 
-   $ go install ./...
+   $ go install -tags experimental ./...
 
 in the root folder.
 
@@ -56,7 +60,7 @@ There is an integration test availble in `atom_test.go`. This serves as both an
 example of the overall flow, and a test function. You can run this simply by
 doing
 
-    $ go test -v
+    $ go test -v -tags experimental
 
 in the root atom folder.
 
