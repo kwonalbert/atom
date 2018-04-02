@@ -53,7 +53,6 @@ func GenMsg(msg []byte) Message {
 		}
 		fmt.Println("fail msg!")
 	}
-	return nil
 }
 
 func GenMsgs(plaintexts [][]byte) []Message {
@@ -122,7 +121,6 @@ func TrapToMessage(trap Trap, numPts int) (Message, error) {
 		}
 		return msg, nil
 	}
-	return nil, nil
 }
 
 func ExtractMessages(ciphertexts []Ciphertext) []Message {

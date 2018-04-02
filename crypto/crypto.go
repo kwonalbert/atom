@@ -5,14 +5,14 @@ import (
 	"runtime"
 	"sync"
 
-	"github.com/dedis/crypto/xof/blake"
 	"github.com/dedis/kyber/group/edwards25519"
 	"github.com/dedis/kyber/util/random"
+	"github.com/dedis/kyber/xof/blake2xb"
 
 	"golang.org/x/crypto/sha3"
 )
 
-var SUITE = edwards25519.NewBlakeSHA256Ed25519WithRand(blake.New(nil))
+var SUITE = edwards25519.NewBlakeSHA256Ed25519WithRand(blake2xb.New(nil))
 var refPt = SUITE.Point()
 
 // Basic ElGamal encryption
